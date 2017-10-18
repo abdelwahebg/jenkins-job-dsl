@@ -68,7 +68,7 @@ def prepare(Map jobParameters) {
 	if (params["device"] != null && !params["device"].isEmpty() && !params["device"].equals("NULL")) {
 	    currentBuild.displayName += "|${device}"
 	}
-	if (params["browser"] != null && !params["browser"].isEmpty() && !params["device"].equals("browser")) {
+	if (params["browser"] != null && !params["browser"].isEmpty() && !params["browser"].equals("NULL")) {
 	    currentBuild.displayName += "|${browser}"
 	}
 	if (params["browser_version"] != null && !params["browser_version"].isEmpty() && !params["browser_version"].equals("*") && !params["browser_version"].equals("NULL")) {

@@ -19,6 +19,10 @@ def runJob() {
 
             this.getResources()
 
+	    if (params["device"] != null && !params["device"].isEmpty() && !params["device"].equals("NULL")) {
+                mobileGoals = this.setupForMobile("${device}", jobParameters)
+            }
+
             mobileGoals = this.setupForMobile("${device}", jobParameters)
 
             this.runTests(jobParameters, mobileGoals)

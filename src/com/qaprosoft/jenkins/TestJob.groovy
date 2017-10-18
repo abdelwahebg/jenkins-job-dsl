@@ -1,4 +1,4 @@
-package com.smule.jenkins
+package com.qaprosoft.jenkins
 
 @Grab('org.yaml:snakeyaml:1.18')
 import org.yaml.snakeyaml.*

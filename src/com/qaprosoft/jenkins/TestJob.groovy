@@ -23,8 +23,6 @@ def runJob() {
                 mobileGoals = this.setupForMobile("${device}", jobParameters)
             }
 
-            mobileGoals = this.setupForMobile("${device}", jobParameters)
-
             this.runTests(jobParameters, mobileGoals)
 
             this.reportingResults()

@@ -63,13 +63,13 @@ def setJobParameters(String testFields, String platform, String nodeType) {
 def prepare(Map jobParameters) {
     stage('Preparation') {
         currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}|${CARINA_CORE_VERSION}"
-	if (params["device"] != null && !params["device"].isEmpty()) {
+	if (params["device"] != null && !params["device"].isEmpty() && !params["device"].equals("NULL")) {
 	    currentBuild.displayName += "|${device}"
 	}
-	if (params["browser"] != null && !params["browser"].isEmpty()) {
+	if (params["browser"] != null && !params["browser"].isEmpty() && !params["device"].equals("browser")) {
 	    currentBuild.displayName += "|${browser}"
 	}
-	if (params["browser_version"] != null && !params["browser_version"].isEmpty() && !params["browser_version"].equals("*")) {
+	if (params["browser_version"] != null && !params["browser_version"].isEmpty() && !params["browser_version"].equals("*") && !params["browser_version"].equals("NULL")) {
 	    currentBuild.displayName += "|${browser_version}"
 	}
 	

@@ -223,7 +223,7 @@ def runTests(Map jobParameters, String mobileGoals) {
             goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
 	}
 
-        goalMap.put("zafira_enabled", params["zafira_enabled"])
+	goalMap.put("zafira_enabled", "${zafiraEnabled}")
         goalMap.put("ci_run_id", "${uuid}")
         goalMap.put("ci_url", "$JOB_URL")
         goalMap.put("ci_build", "$BUILD_NUMBER")

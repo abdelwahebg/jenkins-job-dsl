@@ -65,13 +65,13 @@ def setJobParameters(String testFields, String platform, String nodeType) {
 def prepare(Map jobParameters) {
     stage('Preparation') {
         currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}|${CARINA_CORE_VERSION}"
-	if (!isParamEpmty(params["device"])) {
+	if (!isParamEmpty(params["device"])) {
 	    currentBuild.displayName += "|${device}"
 	}
-	if (!isParamEpmty(params["browser"])) {
+	if (!isParamEmpty(params["browser"])) {
 	    currentBuild.displayName += "|${browser}"
 	}
-	if (!isParamEpmty(params["browser_version"])) {
+	if (!isParamEmpty(params["browser_version"])) {
 	    currentBuild.displayName += "|${browser_version}"
 	}
 	
@@ -211,15 +211,15 @@ def runTests(Map jobParameters, String mobileGoals) {
 
         goalMap.put("env", "\"${env.env}\"")
 
-	if (!isParamEpmty(params["browser"])) {
+	if (!isParamEmpty(params["browser"])) {
             goalMap.put("browser", params["browser"])
 	}
 
-	if (!isParamEpmty(params["auto_screenshot"])) {
+	if (!isParamEmpty(params["auto_screenshot"])) {
             goalMap.put("auto_screenshot", params["auto_screenshot"])
 	}
 
-	if (!isParamEpmty(params["keep_all_screenshots"])) {
+	if (!isParamEmpty(params["keep_all_screenshots"])) {
             goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
 	}
 

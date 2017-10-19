@@ -65,7 +65,7 @@ def setJobParameters(String testFields, String platform, String nodeType) {
 def prepare(Map jobParameters) {
     stage('Preparation') {
         currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}"
-	if (!isParamEmpty(params["device"])) {
+	if (!isParamEmpty("${carina-core_version}")) {
 	    currentBuild.displayName += "|${carina-core_version}"
 	}
 	if (!isParamEmpty(params["device"])) {

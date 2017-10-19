@@ -209,9 +209,9 @@ def runTests(Map jobParameters, String mobileGoals) {
             zafiraEnabled = "false"
         }
 
-        goalMap.put("env", "\"${env.env}\"")
+        goalMap.put("env", params["env"])
 
-	if (!isParamEmpty(params["browser"])) {
+	if (params["browser"] != null && !params["browser"].isEmpty()) {
             goalMap.put("browser", params["browser"])
 	}
 
@@ -223,7 +223,7 @@ def runTests(Map jobParameters, String mobileGoals) {
             goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
 	}
 
-        goalMap.put("zafira_enabled", "${zafiraEnabled}")
+        goalMap.put("zafira_enabled", params["zafira_enabled"])
         goalMap.put("ci_run_id", "${uuid}")
         goalMap.put("ci_url", "$JOB_URL")
         goalMap.put("ci_build", "$BUILD_NUMBER")

@@ -65,13 +65,13 @@ def setJobParameters(String testFields, String platform, String nodeType) {
 def prepare(Map jobParameters) {
     stage('Preparation') {
         currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}|${CARINA_CORE_VERSION}"
-	if (params["device"] != null && !params["device"].isEmpty() && !params["device"].equals("NULL")) {
+	if (!isParamEpmty(params["device"])) {
 	    currentBuild.displayName += "|${device}"
 	}
-	if (params["browser"] != null && !params["browser"].isEmpty() && !params["browser"].equals("NULL")) {
+	if (!isParamEpmty(params["browser"])) {
 	    currentBuild.displayName += "|${browser}"
 	}
-	if (params["browser_version"] != null && !params["browser_version"].isEmpty() && !params["browser_version"].equals("*") && !params["browser_version"].equals("NULL")) {
+	if (!isParamEpmty(params["browser_version"])) {
 	    currentBuild.displayName += "|${browser_version}"
 	}
 	
@@ -101,9 +101,9 @@ def setupForMobile(String devicePattern, Map jobParameters) {
 
     stage("Mobile Preparation") {
         if (jobParameters.get("platform").toString().equalsIgnoreCase("android")) {
-            goalMap = setupGoalsForAndroid(goalMap, jobParameters)
+            goalMap = setupGoalsForAndroid(goalMap)
         } else {
-            goalMap = setupGoalsForiOS(goalMap, jobParameters)
+            goalMap = setupGoalsForiOS(goalMap)
         }
        	echo "DEVICE: " +  devicePattern
 
@@ -135,7 +135,7 @@ def setupForMobile(String devicePattern, Map jobParameters) {
     return buildOutGoals(goalMap)
 }
 
-def setupGoalsForAndroid(Map<String, String> goalMap, Map<String, String> jobParameters) {
+def setupGoalsForAndroid(Map<String, String> goalMap) {
 
     echo "ENV: " +  params["env"]
 
@@ -156,7 +156,7 @@ def setupGoalsForAndroid(Map<String, String> goalMap, Map<String, String> jobPar
 }
 
 
-def setupGoalsForiOS(Map<String, String> goalMap, Map<String, String> jobParameters) {
+def setupGoalsForiOS(Map<String, String> goalMap) {
 
 
     goalMap.put("capabilities.platform", "IOS")
@@ -209,25 +209,25 @@ def runTests(Map jobParameters, String mobileGoals) {
             zafiraEnabled = "false"
         }
 
-        if (getBinding().hasVariable("regression_version_number") && !"${regression_version_number}".isEmpty) {
-            echo "regression_version_number Flag has been set manually, overriding default.."
-            regressionVersionNumber = ${regression_version_number}
-        }else{
-            echo "regression_version_number Flag has not been set, overriding it with default date: " + regressionVersionNumber
-        }
-
         goalMap.put("env", "\"${env.env}\"")
-        goalMap.put("regression_version_number", "${regressionVersionNumber}")
-        goalMap.put("browser", "${browser}")
+
+	if (!isParamEpmty(params["browser"])) {
+            goalMap.put("browser", params["browser"])
+	}
+
+	if (!isParamEpmty(params["auto_screenshot"])) {
+            goalMap.put("auto_screenshot", params["auto_screenshot"])
+	}
+
+	if (!isParamEpmty(params["keep_all_screenshots"])) {
+            goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
+	}
+
         goalMap.put("zafira_enabled", "${zafiraEnabled}")
         goalMap.put("ci_run_id", "${uuid}")
         goalMap.put("ci_url", "$JOB_URL")
         goalMap.put("ci_build", "$BUILD_NUMBER")
-        goalMap.put("unique_testrun_fields", jobParameters.get("testField"))
         goalMap.put("platform", jobParameters.get("platform"))
-        goalMap.put("auto_screenshot", "${auto_screenshot}")
-        goalMap.put("keep_all_screenshots", "${keep_all_screenshots}")
-        goalMap.put("result_sorting", "false")
 
         def mvnBaseGoals = "${DEFAULT_BASE_MAVEN_GOALS} ${overrideFields}" + buildOutGoals(goalMap) + mobileGoals
 
@@ -277,9 +277,11 @@ def cleanWorkSpace() {
     }
 }
 
-
-@NonCPS
-private Map<String,Object> parseYml(String ymlFile) {
-
-    return  (Map<String, Object>)(new Yaml()).load(ymlFile)
+def isParamEmpty(String value) {
+    if (value == null || value.isEmpty() || value.equals("NULL")) {
+	return true
+    } else {
+	return false
+    }
 }
+

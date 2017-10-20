@@ -91,9 +91,9 @@ def repoClone() {
 def getResources() {
     stage("Download Resources") {
         if (isUnix()) {
-            sh "'mvn' -f pom.xml clean process-resources process-test-resources"
+            sh "'mvn' -B -f pom.xml clean process-resources process-test-resources"
         } else {
-            bat(/"mvn" -f pom.xml clean process-resources process-test-resources/)
+            bat(/"mvn" -B -f pom.xml clean process-resources process-test-resources/)
         }
     }
 }
@@ -237,11 +237,11 @@ def runTests(Map jobParameters, String mobileGoals) {
         if (isUnix()) {
             suiteNameForUnix = "${suite}".replace("\\", "/")
             echo "Suite for Unix: ${suiteNameForUnix}"
-            sh "'mvn' ${mvnBaseGoals} -Dsuite=${suiteNameForUnix} -Dzafira_report_folder=./reports/qa -Dreport_url=$JOB_URL$BUILD_NUMBER/eTAF_Report"
+            sh "'mvn' -B ${mvnBaseGoals} -Dsuite=${suiteNameForUnix} -Dzafira_report_folder=./reports/qa -Dreport_url=$JOB_URL$BUILD_NUMBER/eTAF_Report"
         } else {
             suiteNameForWindows = "${suite}".replace("/", "\\")
             echo "Suite for Windows: ${suiteNameForWindows}"
-            bat(/"mvn" ${mvnBaseGoals} -Dsuite=${suiteNameForWindows} -Dzafira_report_folder=.\reports\qa -Dreport_url=$JOB_URL$BUILD_NUMBER\eTAF_Report/)
+            bat(/"mvn" -B ${mvnBaseGoals} -Dsuite=${suiteNameForWindows} -Dzafira_report_folder=.\reports\qa -Dreport_url=$JOB_URL$BUILD_NUMBER\eTAF_Report/)
         }
 
         this.setTestResults()

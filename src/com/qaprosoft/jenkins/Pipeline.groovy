@@ -27,7 +27,8 @@ def runPipeline() {
 }
 
 def parsePipeline(String file, List listPipelines) {
-    def jobInfo = retrieveRawValues(file, "jenkinsJobName")
+    def jobName = retrieveRawValues(file, "jenkinsJobName")
+    println "jobName: " + jobName
     def pipelineInfo = retrieveRawValues(file, "jenkinsRegressionPipeline")
     def priorityInfo = retrieveRawValues(file, "jenkinsJobExecutionOrder")
     def emailList = getInfo(retrieveRawValues(file, "jenkinsEmail"))
@@ -44,7 +45,7 @@ def parsePipeline(String file, List listPipelines) {
         for (def pipeName : getInfo(pipelineInfo).split(",")) {
             if ("${JOB_BASE_NAME}".equalsIgnoreCase(pipeName)) {
                 println "adding pipeline: " + pipeName
-                listPipelines.add(mapObject(pipeName, jobInfo, env, threadCount, retryCount, priorityInfo, emailList, overrideFields))
+                listPipelines.add(mapObject(pipeName, jobName, env, threadCount, retryCount, priorityInfo, emailList, overrideFields))
             }
         }
     }

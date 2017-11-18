@@ -33,33 +33,33 @@ def parsePipeline(String file, List listPipelines) {
     println "pipelineInfo: " + pipelineInfo
     def priorityInfo = retrieveRawValues(file, "jenkinsJobExecutionOrder")
     println "priorityInfo: " + priorityInfo
-    def emailList = getInfo(retrieveRawValues(file, "jenkinsEmail"))
 
+    def emailList = getInfo(retrieveRawValues(file, "jenkinsEmail"))
     if (!"${email_list}".isEmpty()) {
         emailList = "${email_list}"
     }
     println "emailList: " + emailList
+
     def overrideFields = getInfo(retrieveRawValues(file, "overrideFields"))
     def env = params["env"]
-    def threadCount = params["thread_count"]
+
     def retryCount = params["retry_count"]
 
     if (!pipelineInfo.contains("null")) {
         for (def pipeName : getInfo(pipelineInfo).split(",")) {
             if ("${JOB_BASE_NAME}".equalsIgnoreCase(pipeName)) {
                 println "adding pipeline: " + pipeName
-                listPipelines.add(mapObject(pipeName, jobName, env, threadCount, retryCount, priorityInfo, emailList, overrideFields))
+                listPipelines.add(mapObject(pipeName, jobName, env, retryCount, priorityInfo, emailList, overrideFields))
             }
         }
     }
 }
 
-def mapObject(String pipeName, String jobName, String envName, String threadCount, String retryCount, String priorityNum, String emailList, String overrideFields) {
+def mapObject(String pipeName, String jobName, String envName, String retryCount, String priorityNum, String emailList, String overrideFields) {
     def pipelineMap = [:]
     pipelineMap.put("name", pipeName)
     pipelineMap.put("jobName", getInfo(jobName))
     pipelineMap.put("environment", envName)
-    pipelineMap.put("threadCount", threadCount)
     pipelineMap.put("retryCount", retryCount)
     pipelineMap.put("priority", getInfo(priorityNum))
     pipelineMap.put("emailList", emailList)
@@ -110,7 +110,6 @@ def buildOutStage(String folderName, Map entry) {
                 parameters: [
                         string(name: 'env', value: entry.get("environment")),
                         string(name: 'email_list', value: entry.get("emailList")),
-                        string(name: 'thread_count', value: entry.get("threadCount")),
                         string(name: 'retry_count', value: entry.get("retryCount")),
                         string(name: 'overrideFields', value: "${overrideField}".toString())
                 ]

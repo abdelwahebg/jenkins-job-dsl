@@ -30,12 +30,15 @@ def parsePipeline(String file, List listPipelines) {
     def jobName = retrieveRawValues(file, "jenkinsJobName")
     println "jobName: " + jobName
     def pipelineInfo = retrieveRawValues(file, "jenkinsRegressionPipeline")
+    println "pipelineInfo: " + pipelineInfo
     def priorityInfo = retrieveRawValues(file, "jenkinsJobExecutionOrder")
+    println "priorityInfo: " + priorityInfo
     def emailList = getInfo(retrieveRawValues(file, "jenkinsEmail"))
 
     if (!"${email_list}".isEmpty()) {
         emailList = "${email_list}"
     }
+    println "emailList: " + emailList
     def overrideFields = getInfo(retrieveRawValues(file, "overrideFields"))
     def env = params["env"]
     def threadCount = params["thread_count"]

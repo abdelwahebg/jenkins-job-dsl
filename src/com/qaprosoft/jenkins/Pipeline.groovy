@@ -5,8 +5,7 @@ def runPipeline() {
         git(url: 'https://github.com/qaprosoft/carina-demo.git', credentialsId: '', branch: 'master' )
 
         def listPipelines = []
-	//TODO: hardcoded Android view should be fixed somehow 
-        def folderName = "Android"
+        def folderName = "Automation"
         def files = findFiles(glob: 'src/test/resources/testng_suites/**/*.xml')
     
         if(files.length > 0) {

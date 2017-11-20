@@ -91,9 +91,9 @@ def repoClone() {
 def getResources() {
     stage("Download Resources") {
         if (isUnix()) {
-            sh "'mvn' -B -f pom.xml clean process-resources process-test-resources"
+            sh "'mvn' -B -f pom.xml clean process-resources process-test-resources -Dcarina-core_version=$CARINA_CORE_VERSION"
         } else {
-            bat(/"mvn" -B -f pom.xml clean process-resources process-test-resources/)
+            bat(/"mvn" -B -f pom.xml clean process-resources process-test-resources -Dcarina-core_version=$CARINA_CORE_VERSION/)
         }
     }
 }

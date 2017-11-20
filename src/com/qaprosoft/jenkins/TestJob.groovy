@@ -37,7 +37,7 @@ def setJobType(String suiteInfo) {
     switch(suiteInfo) {
         case ~/^(?!.*web).*api.*$/:
             println "Suite Type: API";
-            return setJobParameters("env,url", "API", "master")
+            return setJobParameters("env,url", "API", "api")
         case ~/^.*web.*$/:
             println "Suite Type: Web";
             return setJobParameters("env,url,browser,browser_version", "*", "spot-fleet")

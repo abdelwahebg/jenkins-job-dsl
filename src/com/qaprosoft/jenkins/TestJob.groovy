@@ -65,8 +65,8 @@ def setJobParameters(String testFields, String platform, String nodeType) {
 def prepare(Map jobParameters) {
     stage('Preparation') {
         currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}"
-	if (!isParamEmpty(params["carina-core_version"])) {
-	    currentBuild.displayName += "|" + params["carina-core_version"] 
+	if (!isParamEmpty("${CARINA_CORE_VERSION}")) {
+	    currentBuild.displayName += "|" + "${CARINA_CORE_VERSION}" 
 	}
 	if (!isParamEmpty(params["device"])) {
 	    currentBuild.displayName += "|${device}"
@@ -118,14 +118,7 @@ def setupForMobile(String devicePattern, Map jobParameters) {
 	//TODO: remove after resolving issues with old mobile capabilities generator
 	goalMap.put("capabilities.platformName", jobParameters.get("platform").toString().toUpperCase())
 
-        goalMap.put("driver_type", "mobile_grid")
-
         goalMap.put("capabilities.newCommandTimeout", "180")
-
-        goalMap.put("mobile_appium_restart", "false")
-        goalMap.put("mobile_app_uninstall", "false")
-        goalMap.put("mobile_app_install", "false")
-
 
         goalMap.put("retry_count", "${retry_count}")
         goalMap.put("thread_count", "${thread_count}")

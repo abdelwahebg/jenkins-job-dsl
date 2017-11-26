@@ -232,7 +232,15 @@ def runTests(Map jobParameters, String mobileGoals) {
         goalMap.put("ci_build", "$BUILD_NUMBER")
         goalMap.put("platform", jobParameters.get("platform"))
 
-        def mvnBaseGoals = "${DEFAULT_BASE_MAVEN_GOALS} ${overrideFields}" + buildOutGoals(goalMap) + mobileGoals
+        def mvnBaseGoals = "${DEFAULT_BASE_MAVEN_GOALS}" + buildOutGoals(goalMap) + mobileGoals
+        if ("${JACOCO_ENABLE}".equalsIgnoreCase("true")) {
+            echo "Enabling jacoco report generation goals."
+            mvnBaseGoals += " jacoco:instrument"
+        }
+
+        mvnBaseGoals += " ${overrideFields}"
+        mvnBaseGoals = mvnBaseGoals.replace(", ", ",")
+
 
         if (isUnix()) {
             suiteNameForUnix = "${suite}".replace("\\", "/")
@@ -242,6 +250,12 @@ def runTests(Map jobParameters, String mobileGoals) {
             suiteNameForWindows = "${suite}".replace("/", "\\")
             echo "Suite for Windows: ${suiteNameForWindows}"
             bat(/"mvn" -B ${mvnBaseGoals} -Dsuite=${suiteNameForWindows} -Dzafira_report_folder=.\reports\qa -Dreport_url=$JOB_URL$BUILD_NUMBER\eTAF_Report/)
+        }
+
+        archiveArtifacts artifacts: '**/jacoco.exec', fingerprint: true, allowEmptyArchive: true
+        // https://github.com/jenkinsci/pipeline-aws-plugin#s3upload
+        withAWS(region: 'us-west-1',credentials:'aws-jacoco-token') {
+            s3Upload(bucket:"$JACOCO_BUCKET", path:"$JOB_NAME/$BUILD_NUMBER/jacoco-it.exec", includePathPattern:'**/jacoco.exec')
         }
 
         this.setTestResults()

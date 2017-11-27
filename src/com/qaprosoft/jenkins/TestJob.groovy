@@ -295,3 +295,33 @@ def isParamEmpty(String value) {
     }
 }
 
+
+def runJacocoMergeJob() {
+    node(jobParameters.get("node")) {
+        timestamps {
+            this.runMerge()
+            this.cleanWorkSpace()
+        }
+    }
+}
+
+def runMerge() {
+    stage('Run Test Suite') {
+        // download jacoco-it.exec coverage reports
+        withAWS(region: 'us-west-1',credentials:'aws-jacoco-token') {
+            files = s3FindFiles(bucket:"$JACOCO_BUCKET", path:'**/**/jacoco-it.exec')
+            files.each (files) { file ->
+              println "file: " + file
+            }
+
+            //s3Download(bucket:"$JACOCO_BUCKET", path:"$JOB_NAME/$BUILD_NUMBER/jacoco-it.exec", includePathPattern:'**/jacoco.exec')
+        }
+
+        // merge all reports into the single file
+
+        // upload merged file into another bucket/key
+
+        // remove old binary reports
+
+    }
+}

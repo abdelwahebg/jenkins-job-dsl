@@ -37,26 +37,25 @@ def setJobType(String suiteInfo) {
     switch(suiteInfo) {
         case ~/^(?!.*web).*api.*$/:
             println "Suite Type: API";
-            return setJobParameters("env,url", "API", "api")
+            return setJobParameters("API", "api")
         case ~/^.*web.*$/:
             println "Suite Type: Web";
-            return setJobParameters("env,url,browser,browser_version", "*", "spot-fleet")
+            return setJobParameters("*", "spot-fleet")
         case ~/^.*android.*$/:
             println "Suite Type: Android";
-            return setJobParameters("app_version,mobile_device_name,mobile_device_udid,mobile_platform_name,mobile_platform_version", "ANDROID", "android")
+            return setJobParameters("ANDROID", "android")
         case ~/^.*ios.*$/:
             println "Suite Type: iOS";
             //TODO: Need to improve this to be able to handle where emulator vs. physical tests should be run.
-            return setJobParameters("app_version,mobile_device_name,mobile_device_udid,mobile_platform_name,mobile_platform_version", "ios", "ios")
+            return setJobParameters("ios", "ios")
         default:
             println "Suite Type: Default";
-            return setJobParameters("env,url", "*", "master")
+            return setJobParameters("*", "master")
     }
 }
 
-def setJobParameters(String testFields, String platform, String nodeType) {
+def setJobParameters(String platform, String nodeType) {
     def jobProperties = [:]
-    jobProperties.put("testField", testFields)
     jobProperties.put("platform", platform)
     jobProperties.put("node", nodeType)
     return jobProperties
@@ -187,7 +186,12 @@ def runTests(Map jobParameters, String mobileGoals) {
     stage('Run Test Suite') {
         def goalMap = [:]
 
-	uuid = "${ci_run_id}"
+        def DEFAULT_BASE_MAVEN_GOALS = "-Ds3_local_storage=/opt/apk -Dhockeyapp_local_storage=/opt/apk -Dcarina-core_version=$CARINA_CORE_VERSION -f pom.xml \
+			-Dci_run_id=$ci_run_id -Dcore_log_level=$CORE_LOG_LEVEL -Demail_list=$email_list \
+			-Dmaven.test.failure.ignore=true -Dselenium_host=$SELENIUM_HOST -Dmax_screen_history=1 \
+			-Dinit_retry_count=0 -Dinit_retry_interval=10 $ZAFIRA_BASE_CONFIG clean test"
+
+ 	uuid = "${ci_run_id}"
 	echo "uuid: " + uuid
         if (uuid.isEmpty()) {
             uuid = randomUUID() as String
@@ -225,7 +229,8 @@ def runTests(Map jobParameters, String mobileGoals) {
         goalMap.put("ci_build", "$BUILD_NUMBER")
         goalMap.put("platform", jobParameters.get("platform"))
 
-        def mvnBaseGoals = "${DEFAULT_BASE_MAVEN_GOALS}" + buildOutGoals(goalMap) + mobileGoals
+        def mvnBaseGoals = DEFAULT_BASE_MAVEN_GOALS + buildOutGoals(goalMap) + mobileGoals
+
         if ("${JACOCO_ENABLE}".equalsIgnoreCase("true")) {
             echo "Enabling jacoco report generation goals."
             mvnBaseGoals += " jacoco:instrument"
@@ -233,7 +238,6 @@ def runTests(Map jobParameters, String mobileGoals) {
 
         mvnBaseGoals += " ${overrideFields}"
         mvnBaseGoals = mvnBaseGoals.replace(", ", ",")
-
 
         if (isUnix()) {
             suiteNameForUnix = "${suite}".replace("\\", "/")

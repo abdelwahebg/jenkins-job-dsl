@@ -37,10 +37,10 @@ def setJobType(String suiteInfo) {
     switch(suiteInfo) {
         case ~/^(?!.*web).*api.*$/:
             println "Suite Type: API";
-            return setJobParameters("API", "api")
+            return setJobParameters("API", "qps-slave")
         case ~/^.*web.*$/:
             println "Suite Type: Web";
-            return setJobParameters("*", "spot-fleet")
+            return setJobParameters("*", "qps-slave")
         case ~/^.*android.*$/:
             println "Suite Type: Android";
             return setJobParameters("ANDROID", "android")
@@ -63,7 +63,7 @@ def setJobParameters(String platform, String nodeType) {
 
 def prepare(Map jobParameters) {
     stage('Preparation') {
-        currentBuild.displayName = "#${BUILD_NUMBER}|${suite}|${env.env}"
+        currentBuild.displayName = "#${BUILD_NUMBER}|${env.env}"
 	if (!isParamEmpty("${CARINA_CORE_VERSION}")) {
 	    currentBuild.displayName += "|" + "${CARINA_CORE_VERSION}" 
 	}
@@ -215,11 +215,11 @@ def runTests(Map jobParameters, String mobileGoals) {
             goalMap.put("browser", params["browser"])
 	}
 
-	if (!isParamEmpty(params["auto_screenshot"])) {
+	if (params["auto_screenshot"] != null && !params["auto_screenshot"].isEmpty()) {
             goalMap.put("auto_screenshot", params["auto_screenshot"])
 	}
 
-	if (!isParamEmpty(params["keep_all_screenshots"])) {
+	if (params["keep_all_screenshots"] != null && !params["keep_all_screenshots"].isEmpty()) {
             goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
 	}
 

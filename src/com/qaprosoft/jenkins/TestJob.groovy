@@ -214,12 +214,12 @@ def runTests(Map jobParameters, String mobileGoals) {
 	if (params["browser"] != null && !params["browser"].isEmpty()) {
             goalMap.put("browser", params["browser"])
 	}
-	echo "auto_screenshot: " + params["auto_screenshot"]
-	if (params["auto_screenshot"] != null && !params["auto_screenshot"].isEmpty()) {
+
+	if (params["auto_screenshot"] != null) {
             goalMap.put("auto_screenshot", params["auto_screenshot"])
 	}
 
-	if (params["keep_all_screenshots"] != null && !params["keep_all_screenshots"].isEmpty()) {
+	if (params["keep_all_screenshots"] != null) {
             goalMap.put("keep_all_screenshots", params["keep_all_screenshots"])
 	}
 
